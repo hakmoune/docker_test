@@ -1,8 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const redis = require("redis");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// connect redis
+const REDIS_HOST = "redis";
+const REDIS_PORT = 6379;
+const redisClient = redis.createClient({
+  url: `redis://${REDIS_HOST}:${REDIS_PORT}`,
+});
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
+redisClient.on("connect", () =>
+  console.log("Connected to Redis successfully!")
+);
+
+redisClient.connect();
 
 // connect db
 const DB_USER = "root";
@@ -21,7 +35,13 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-  res.send("Welcome to my Node.js app! This is the home page !!!");
+  redisClient.set("products", "products data");
+  res.send("Welcome to my Node.js app! This is the home page!");
+});
+
+app.get("/products", async (req, res) => {
+  const products = await redisClient.get("products");
+  res.send(products || "No products found in Redis cache.");
 });
 
 app.listen(PORT, () => {
