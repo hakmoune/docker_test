@@ -8,16 +8,30 @@ services:
       - ./.env
     depends_on:
       - mongo
+      - postgres
+      - redis
   mongo:
     image: mongo
     restart: always
     volumes:
+      # À l'intérieur du container mongo Les données seront stockées dans /data/db
+      # À l'extérieur du conteneur, les données seront stockées dans le volume nommé mongo-db
+      # Par défaut (sans rien faire), sur ta machine locale Docker va créer un répertoire caché où seront sauvegardées toutes les données du volume.
       - mongo-db:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: example
   redis:
     image: redis
 
 volumes:
   mongo-db:
+  postgres-db:
