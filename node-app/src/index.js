@@ -14,7 +14,7 @@ const redisClient = redis.createClient({
 });
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.on("connect", () =>
-  console.log("Connected to Redis successfully !")
+  console.log("Connected to Redis successfully!")
 );
 
 redisClient.connect();
@@ -57,7 +57,7 @@ mongoose
 
 app.get("/", (req, res) => {
   redisClient.set("products", "products data");
-  res.send("Welcome to my Node.js app! This is the home page!");
+  res.send("Welcome to my Node.js app ! This is the home page !");
 });
 
 app.get("/products", async (req, res) => {
